@@ -3,12 +3,15 @@ import { resolve } from 'path'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
+  root: 'src',
   build: {
+    emptyOutDir: true,
+    outDir: '../dist',
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
-        login: resolve(__dirname, 'login/index.html'),
-        app: resolve(__dirname, 'app/index.html'),
+        main: resolve(__dirname, 'src/index.html'),
+        login: resolve(__dirname, 'src/login/index.html'),
+        app: resolve(__dirname, 'src/app/index.html'),
       },
     },
   },
