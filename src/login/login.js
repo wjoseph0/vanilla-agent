@@ -1,5 +1,5 @@
 //import pocketbase
-import { pb } from '../pocketbase'
+import { pb } from '../pocketbase.js'
 
 //if already logged in go to app
 if (pb.authStore.model) {
