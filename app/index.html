@@ -1,0 +1,27 @@
+<head>
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <title>Vanilla Agent</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+  <div id="container">
+    <p>Welcome to the app!</p>
+  </div>
+
+  <script type="module">
+    import { pb } from '../pocketbase'
+    const container = document.getElementById('container')
+    const status = document.createElement('p')
+    status.textContent = `Signed in as: ${pb.authStore.model.username}`
+    container.append(status)
+
+    const logoutButton = document.createElement('button')
+    logoutButton.textContent = 'Logout'
+    logoutButton.addEventListener('click', () => {
+      pb.authStore.clear()
+      location.replace('/login/')
+    })
+    container.append(logoutButton)
+  </script>
+</body>
