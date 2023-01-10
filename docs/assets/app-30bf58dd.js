@@ -1,1 +1,0 @@
-import{p as e}from"./pocketbase-64c17f31.js";/* empty css              */const n=document.getElementById("container"),o=document.createElement("p");o.textContent=`Signed in as: ${e.authStore.model.username}`;n.append(o);const t=document.createElement("button");t.textContent="Logout";t.addEventListener("click",()=>{e.authStore.clear(),location.replace("/login/")});n.append(t);
