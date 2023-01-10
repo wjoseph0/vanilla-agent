@@ -1,19 +1,28 @@
 // Import pocketbase
 import { pb } from '../pocketbase.js';
 
-// Grab messagesContainer for reference
-const messagesContainer = document.getElementById('messagesContainer');
+// Utility: Clear all children of element
+function removeChilds(parent) {
+  while (parent.lastChild) {
+    parent.removeChild(parent.lastChild);
+  }
+};
 
-// Declare global messages var
+// Declare var (global): messages
 let messages;
 
 // Get initial messages
 const resultList = await pb.collection('messages').getList(1, 50, {
   sort: 'created',
 });
+
+// Set messages var to initial messages
 messages = resultList.items;
 
-// Push messages to DOM
+// Grab messagesContainer for reference
+const messagesContainer = document.getElementById('messagesContainer');
+
+// Declare function: Push messages array to DOM
 function showMessages() {
   for (let index = 0; index < messages.length; index++) {
     const message = messages[index];
@@ -22,31 +31,54 @@ function showMessages() {
     messagesContainer.append(p);
   }
 }
-// Initial load: Push messages to DOM
+
+// Initial load: Push messages array to DOM
 showMessages();
 
-// Clear all children of element
-function removeChilds(parent) {
-  while (parent.lastChild) {
-    parent.removeChild(parent.lastChild);
-  }
-};
 
-// Subscribe to realtime messages
-await pb.collection('messages').subscribe('*', async ({ action, record }) => {
-  removeChilds(messagesContainer); // Clear messages
+// Declare function: Subscribe to realtime messages
+async function subscribeToMessages() {
+  await pb.collection('messages').subscribe('*', async ({ action, record }) => {
+    if (action === 'create') {
+      const msg = document.createElement('p');
+      msg.textContent = record.text;
+      messagesContainer.append(msg);
+      messages = [...messages, record]; // Update messages array
+      /* const user = await pb.collection('users').getOne(record.user); // Fetch associated user
+      record.expand = { user }; */
+    }
+    if (action === 'delete') {
+      removeChilds(messagesContainer); // Clear DOM messages
+      messages = messages.filter((m) => m.id !== record.id); // Update messages array
+      showMessages(); // Push messages array to DOM
+    }
+  });
+}
 
-  if (action === 'create') {
-    const user = await pb.collection('users').getOne(record.user); // Fetch associated user
-    record.expand = { user };
-    messages = [...messages, record]; // Update messages
-    showMessages(); // Push messages to DOM
+// Initial load: Subscribe to realtime messages
+subscribeToMessages();
+
+// Handle nav away and to page
+document.addEventListener('visibilitychange', async () => {
+  if (document.visibilityState === 'hidden') {
+    pb.collection('messages').unsubscribe(); // End realtime connection
+    removeChilds(messagesContainer); // Clear DOM messages
   }
-  if (action === 'delete') {
-    messages = messages.filter((m) => m.id !== record.id); // Update messages
-    showMessages(); // Push messages to DOM
+
+  if (document.visibilityState === 'visible') {
+    const resultList = await pb.collection('messages').getList(1, 50, {
+      sort: 'created',
+    });
+    messages = resultList.items;
+    showMessages();
+    subscribeToMessages();
   }
 });
+
+
+// ----------------------
+// NEW MESSAGE FORM LOGIC
+// ----------------------
 
 // Grab new message form elements
 const newMessageForm = document.getElementById('newMessageForm');

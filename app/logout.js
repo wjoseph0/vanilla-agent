@@ -11,7 +11,6 @@ userStatusContainer.append(status);
 const logoutButton = document.createElement('button');
 logoutButton.textContent = 'Logout';
 logoutButton.addEventListener('click', () => {
-  pb.collection('messages').unsubscribe(); // End realtime connection
   pb.authStore.clear();
   location.replace('/login/');
 });
