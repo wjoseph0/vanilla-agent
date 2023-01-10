@@ -72,3 +72,7 @@ svg {
     scroll-behavior: auto !important;
   }
 }
+
+body {
+  background-color: var(--clr-neutral-100);
+}
