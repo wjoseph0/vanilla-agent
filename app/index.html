@@ -3,12 +3,18 @@
 <head>
   <title>Vanilla Agent</title>
   <link rel="stylesheet" href="../style.css">
-  <script type="module" src="./userStatus.js" defer></script>
+  <script type="module" src="./logout.js" defer></script>
   <script type="module" src="./messages.js" defer></script>
 </head>
 
 <body>
   <div id="container">
     <p>Welcome to the app!</p>
+    <div id="userStatusContainer"></div>
+    <div id="messagesContainer"></div>
+    <form id="newMessageForm">
+      <input id="messageInput" type="text" placeholder="Message" required />
+      <button id="sendButton">Send</button>
+    </form>
   </div>
 </body>
